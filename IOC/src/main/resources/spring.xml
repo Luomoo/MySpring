@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans default-autowire="byType">
     <bean id="dao1" class="fun.luomo.dao.UserDaoImpl1"/>
-<!--    <bean id="dao2" class="fun.luomo.dao.UserDaoImpl2"/>-->
+    <bean id="dao2" class="fun.luomo.dao.UserDaoImpl2"/>
     <bean id="test" class="fun.luomo.dao.TestDaoImpl"/>
 
-    <bean id="service" class="fun.luomo.service.UserServiceImpl"/>
+    <bean id="service" class="fun.luomo.service.UserServiceImpl">
+        <property name="dao" ref="dao2">
+
+        </property>
+    </bean>
 
 
 </beans>

@@ -24,7 +24,7 @@ public class BeanFactory {
         parseXml(xml);
     }
 
-    private void parseXml(String xml)  {
+    private void parseXml(String xml) {
 
         try {
             String path = this.getClass().getResource("/").getPath() + "\\" + xml;
@@ -80,35 +80,36 @@ public class BeanFactory {
                         Constructor<?> constructor = clazz.getConstructor(field.getType());
                         object = constructor.newInstance(injetObject);
 
+                    }else {
+                        throw new MySpringException("请检查标签是否有误");
                     }
                 }
 
-                if (flag) {
-                    if (attribute.getValue().equals("byType")) {
-                        Field[] fields = clazz.getDeclaredFields();
-                        for (Field field : fields) {
-                            Class<?> type = field.getType();
+                if (object == null) {
+                    if (flag) {
+                        if (attribute.getValue().equals("byType")) {
+                            Field[] fields = clazz.getDeclaredFields();
+                            for (Field field : fields) {
+                                Class<?> type = field.getType();
 
-                            int count = 0;
-                            Object injetObject = null;
-                            for (String key : map.keySet()) {
-                                Class<?> temp = map.get(key).getClass().getInterfaces()[0];
-                                if (temp.getName().equals(type.getName())) {
-                                    injetObject = map.get(key);
-                                    count++;
+                                int count = 0;
+                                Object injetObject = null;
+                                for (String key : map.keySet()) {
+                                    Class<?> temp = map.get(key).getClass().getInterfaces()[0];
+                                    if (temp.getName().equals(type.getName())) {
+                                        injetObject = map.get(key);
+                                        count++;
+                                    }
+                                }
+                                if (count > 1) {
+                                    throw new MySpringException("需要一个，找到两个");
+                                } else {
+                                    object = clazz.newInstance();
+                                    field.setAccessible(true);
+                                    field.set(object, injetObject);
                                 }
                             }
-                            if (count > 1) {
-                                throw new MySpringException("需要一个，找到两个");
-                            }else {
-                                object = clazz.newInstance();
-                                field.setAccessible(true);
-                                field.set(object, injetObject);
-                            }
-
-
                         }
-
                     }
                 }
 
